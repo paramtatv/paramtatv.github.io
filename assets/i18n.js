@@ -13,6 +13,7 @@
 
   var DICT = {
     sa: {
+      'ptnav.discord': 'अध्ययनसङ्घः',
       'pt.ded.name': 'श्रीसद्गुरुदेवः निखिलेश्वरानन्दः',
       'ptnav.sassembly': 'संस्कृतयन्त्रम्',
       'lang.label': 'भाषा',
@@ -55,6 +56,7 @@
       'pt.foot': 'परमतत्त्वम् — सद्गुरोः कृपया, सर्वेभ्यः समर्पितम्।'
     },
     en: {
+      'ptnav.discord': 'Discord',
       'pt.ded.name': 'Sadgurudev Shri Nikhileshwarananda',
       'ptnav.sassembly': 'Sassembly',
       'lang.label': 'Language',
@@ -97,6 +99,7 @@
       'pt.foot': 'Paramtatv — by the grace of Sadgurudev, offered to all.'
     },
     hi: {
+      'ptnav.discord': 'डिस्कॉर्ड',
       'pt.ded.name': 'सद्गुरुदेव श्री निखिलेश्वरानन्द',
       'ptnav.sassembly': 'Sassembly',
       'lang.label': 'भाषा',
