@@ -52,6 +52,7 @@
       'pt.ev.c3.b': 'लघुसाधनात् सम्पूर्णप्रयोगं यावत् — एका भाषा, एकं व्याकरणम्, एकः परीक्ष्यः आरम्भः।',
       'pt.inv.h': 'संस्कृतेन गणकयन्त्रैश्च विश्वस्य गूढरहस्यानि उद्घाटय।',
       'pt.inv.b': 'सूत्रं क्रमं दत्तवत्। क्रमः साधनं दत्तवान्। साधनं तव अस्ति।',
+      'pt.inv.now': 'इदानीं तत् <a href="/sassembly/playground.html">विचारके एव</a> उद्घाट्यम् — किमपि स्थापनीयं नास्ति।',
       'pt.inv.cta': 'संस्कृतयन्त्रं पश्य',
       'pt.foot': 'परमतत्त्वम् — सद्गुरोः कृपया, सर्वेभ्यः समर्पितम्।'
     },
@@ -95,6 +96,7 @@
       'pt.ev.c3.b': 'From a one-file tool to a whole application — one language, one grammar, one bootstrap you can verify.',
       'pt.inv.h': 'Unlock the deep mysteries of the universe with Sanskrit and computers.',
       'pt.inv.b': 'The sutra gave the order. The order gave the builder. The builder is yours.',
+      'pt.inv.now': 'And now it <a href="/sassembly/playground.html">opens in a browser</a> — there is nothing to install.',
       'pt.inv.cta': 'See Sassembly',
       'pt.foot': 'Paramtatv — by the grace of Sadgurudev, offered to all.'
     },
@@ -138,6 +140,7 @@
       'pt.ev.c3.b': 'एक-फ़ाइल औज़ार से पूरे एप्लिकेशन तक — एक भाषा, एक व्याकरण, एक बूटस्ट्रैप जिसे आप जाँच सकें।',
       'pt.inv.h': 'संस्कृत और कंप्यूटर से ब्रह्मांड के गहरे रहस्य खोलें।',
       'pt.inv.b': 'सूत्र ने क्रम दिया। क्रम ने बिल्डर दिया। बिल्डर आपका है।',
+      'pt.inv.now': 'और अब यह <a href="/sassembly/playground.html">ब्राउज़र में ही</a> खुलता है — कुछ इंस्टॉल करने को नहीं।',
       'pt.inv.cta': 'Sassembly देखें',
       'pt.foot': 'परमतत्त्व — सद्गुरुदेव की कृपा से, सबको समर्पित।'
     }
