@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Past 2 GIPS — Sassembly runs natively at 2.25 billion instructions a second — Paramtatv</title><meta name="description" content="Sassembly is a programming language written entirely in Sanskrit. Its keywords are Sanskrit words, its operand roles are marked by kāraka sigils (the grammatical case endings of Sanskrit) instead of…">
+<link rel="canonical" href="https://paramtatv.github.io/blog/speed/">
+<link rel="alternate" type="application/atom+xml" href="https://paramtatv.github.io/blog/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../assets/blog.css">
+<script src="/assets/theme.js"></script></head>
+<body><header class="bh"><div class="bw"><a class="brand" href="/"><span class="deva">परमतत्त्वम्</span> Paramtatv</a>
+<span class="mark" aria-hidden="true">॥</span><a href="../">Blog</a><a href="../feed.xml">Feed</a></div></header>
+<main class="bw" lang="en"><article><h1>Past 2 GIPS — Sassembly runs natively at 2.25 billion instructions a second</h1><p class="meta"><time datetime="2026-10-14">2026-10-14</time> · Paramtatva <span class="tag">sassembly</span><span class="tag">performance</span><span class="tag">risc-v</span><span class="tag">native</span></p><p class="trans"><a href="../speed-sa/" hreflang="sa" lang="sa">संस्कृतम्</a> <a href="../speed-hi/" hreflang="hi" lang="hi">हिन्दी</a></p><div class="post"><p>Sassembly is a programming language written entirely in Sanskrit. Its keywords are Sanskrit words, its operand roles are marked by kāraka sigils (the grammatical case endings of Sanskrit) instead of by position or punctuation, and it compiles to RISC-V RV64. Its compiler is written in Sassembly and, compiled by itself, reproduces itself byte for byte.</p>
+<p>This post is about how fast that compiler runs.</p>
+<h2>The headline: 2.25 G guest instructions per second</h2>
+<p>We measured the Sassembly compiler on its heaviest everyday job: working through its own source, all 5.36 MB of it, in one run. That run executes <strong>56,353,729,585 RISC-V instructions</strong>: fifty-six billion steps of real compiler work.</p>
+<p>On the native path the whole run took <strong>24.94 seconds</strong> of CPU time on an Intel Core i9-9900X. That is <strong>2.25 billion guest instructions per second</strong>, past the 2 GIPS mark, on the program that matters most to us: the compiler itself.</p>
+<p>Before measuring, we wrote down an expected band for compiler-style code of 0.25 to 1.0 G instructions per second. Compiler code with its branches, calls and memory traffic usually translates less well than a tight loop. The measured rate came in above the whole band. The compiler runs close to the rate of our simple benchmark loops.</p>
+<h2>What "native" means here</h2>
+<p>A Sassembly program compiles to an ordinary RV64 machine image. There are two ways to run that image:</p>
+<ul>
+<li><strong>The interpreter</strong>, which steps through it one RISC-V instruction at a time. It is our reference machine: simple, exact, and the yardstick everything else is checked against.</li>
+<li><strong>The native path</strong>, where a translator rewrites the RV64 image ahead of time into the host's own machine code, x86-64 or AArch64, and the host CPU then runs it directly. The translator exists in Sassembly too; the timed runs here used its byte-identical twin, which emits exactly the same machine code.</li>
+</ul>
+<p>The same 56-billion-instruction compiler run that takes <strong>24.94 seconds</strong> natively takes <strong>848.7 seconds</strong> under the interpreter (66 million instructions per second). Native is <strong>more than 33 times faster</strong> on identical work.</p>
+<h2>A tight loop, counted exactly</h2>
+<p>We also measured a small generated benchmark that runs <strong>2.0 billion</strong> guest instructions. Natively it finishes in <strong>1.05–1.09 seconds</strong> of CPU time, about <strong>1.87 G instructions per second</strong> on the same Intel machine.</p>
+<p>On that loop we counted host instructions directly by single-stepping the native code. In steady state the translator emits <strong>exactly 3.000 host instructions per guest instruction</strong>: 24 host instructions for each 8-instruction iteration. For the compiler's own start-up and a small "hello" compile the ratio is <strong>3.13</strong>. The translation stays lean on real code as well as on loops.</p>
+<h2>The same speed on Arm</h2>
+<p>The translator also targets AArch64. On an Arm Cortex-A78AE core clocked at 2.2 GHz, the same 2-billion-instruction benchmark runs in <strong>1.023 seconds</strong>: <strong>1.95 G guest instructions per second</strong>, or <strong>0.89 guest instructions per clock cycle</strong>. Nearly one RISC-V instruction completes per Arm clock cycle.</p>
+<h2>Where the time goes</h2>
+<p>We sampled the native compiler run every 2 ms (12,753 samples) to see where the cycles land. About half of the time goes to guarded memory access, the loads and stores themselves together with the address calculation and guard check the translator places before each one. Plain arithmetic and logic account for 28%, calls for about 15%, and indirect jumps through the runtime for only about 2%.</p>
+<h2>Why this matters</h2>
+<p>A language that hosts its own compiler is only as pleasant as that compiler is fast. With the native path the full self-compile workload finishes in under half a minute on a desktop CPU, and the same benchmark runs at nearly the same rate on Arm. Sassembly programs, and the compiler that builds them, run at real hardware speed.</p>
+<p>We are building toward more: faster memory paths, more host targets, and the same per-cycle efficiency on every machine Sassembly runs on.</p>
+<p>Sassembly is public at <a href="https://github.com/paramtatv/sassembly">github.com/paramtatv/sassembly</a>, with documentation and a playground at <a href="https://paramtatv.github.io/sassembly/">paramtatv.github.io/sassembly</a>.</p></div></article></main></body></html>

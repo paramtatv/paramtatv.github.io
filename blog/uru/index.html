@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&quot;Uru: protein folding, proved exactly, in Sanskrit&quot; — Paramtatv</title><meta name="description" content="Uru (उरु) is a protein-folding search written in Sassembly, our Sanskrit-native RISC-V language. It is compiled to bare-metal RISC-V, and it runs in exact integer arithmetic both on a RISC-V machine…">
+<link rel="canonical" href="https://paramtatv.github.io/blog/uru/">
+<link rel="alternate" type="application/atom+xml" href="https://paramtatv.github.io/blog/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../assets/blog.css">
+<script src="/assets/theme.js"></script></head>
+<body><header class="bh"><div class="bw"><a class="brand" href="/"><span class="deva">परमतत्त्वम्</span> Paramtatv</a>
+<span class="mark" aria-hidden="true">॥</span><a href="../">Blog</a><a href="../feed.xml">Feed</a></div></header>
+<main class="bw" lang="en"><article><h1>&quot;Uru: protein folding, proved exactly, in Sanskrit&quot;</h1><p class="meta"><time datetime="2026-10-14">2026-10-14</time> · Paramtatva <span class="tag">uru</span><span class="tag">protein-folding</span><span class="tag">sassembly</span><span class="tag">hp-model</span><span class="tag">risc-v</span></p><p class="trans"><a href="../uru-sa/" hreflang="sa" lang="sa">संस्कृतम्</a> <a href="../uru-hi/" hreflang="hi" lang="hi">हिन्दी</a></p><div class="post"><p><strong>Uru</strong> (उरु) is a protein-folding search written in Sassembly, our Sanskrit-native RISC-V language. It is compiled to bare-metal RISC-V, and it runs in exact integer arithmetic both on a RISC-V machine and in a web browser. Its job is to find the best way a chain folds and then prove that no better fold exists.</p>
+<h2>The model</h2>
+<p>Uru works on the <strong>HP lattice model</strong> of Lau and Dill (1989). Each residue in the chain is either hydrophobic (H) or polar (P). The chain lies on a lattice, and the energy of a fold is minus the number of H–H pairs that sit next to each other on the lattice but are not next to each other in the chain. Finding the lowest-energy fold is NP-complete (Berger and Leighton, 1998). Every quantity in the model is an integer, so every answer is exact, and two runs cannot disagree.</p>
+<h2>What Uru has proved</h2>
+<ul>
+<li><strong>Exhaustive proof up to 36 residues.</strong> Branch and bound with an admissible bound proves the optimum of the 36-residue benchmark (14 contacts). At every step, its search-node count matches an independent oracle node for node.</li>
+<li><strong>A certificate at 48 residues.</strong> For the 48-residue benchmark, Uru finds a fold with 23 contacts. It also computes an upper bound from Harary and Harborth's theorem, and the bound equals that score, so 23 is optimal. Both numbers are computed in Sassembly.</li>
+<li><strong>Complete ensembles, beyond single answers.</strong> Uru counts every optimal fold, up to rotation and reflection: 2 for the 20-residue benchmark, 19 at 24 residues, 16 at 25 and 192 at 36. It gives the exact density of states up to 20 residues, and the totals agree with OEIS A001411.</li>
+<li><strong>Three dimensions.</strong> On the cubic lattice, the kernel proves the published minimum energy of −8 for four 14-residue chains (Bachmann and Janke). Its node counts again match the oracle's.</li>
+<li><strong>Published values, matched.</strong> Every optimum Uru reports equals the published value for Unger and Moult's benchmarks, as tabulated by Chen and Huang (2005). Every fold Uru returns is re-scored by a separate Python oracle that shares no code with the kernel.</li>
+</ul>
+<p>Here is a single run on the 20-residue benchmark. Uru finds 9 contacts, the published optimum, after exploring 296,070 search nodes:</p>
+<pre><code># S HPHPPHHPHPPHPHHPPHPH
+# B 9 N 296070 P 1 W RUULDLULLDRDRDLDRRU          status: Some(9)
+</code></pre>
+<h2>What the code looks like</h2>
+<p>The kernel is written in Sanskrit from top to bottom. Here is one small piece of the scoring module, the distance |a − b| between two unsigned coordinates. It is copied from the kernel as written, including its English comment line:</p>
+<pre><code>॰ |क - ख| for unsigned operands. Written as two guarded subtractions rather
+॰ than one, because a वियोगः that would go below zero does not saturate.
+सार्वजनिक वृत्तिः अन्तरम् आदाय क ॱॱ न६४ ऽ ख ॱॱ न६४ ददाति न६४ आदि
+    यदि क अधिकम् ख आदि
+        प्रत्यागमनम् क वियोगः ख ।
+    इति
+    प्रत्यागमनम् ख वियोगः क ।
+इति
+</code></pre>
+<p><code>यदि</code> is "if", <code>वियोगः</code> is subtraction and <code>प्रत्यागमनम्</code> is return. Whole programs come out small. The search program is a 71,456-octet ELF, and it builds with zero stubs: every construct becomes real machine instructions.</p>
+<h2>The machine draws the fold</h2>
+<p>Uru also draws its own answer. A Sassembly program sets every pixel of a 160×160 picture of the proved 23-contact fold of the 48-residue chain. A Sassembly driver then puts that picture on the machine's virtio-gpu screen. The image the device wrote is read back, and its checksum, 2045288938, matches the value from an independent Python renderer exactly.</p>
+<h2>Direction</h2>
+<p>Uru shows that a language written in Sanskrit can carry a demanding scientific search, end to end, with every result checked against independent references. We are building toward the next step: as Sassembly gains floating-point and vector support, we want to widen Uru's scope from the lattice model toward full protein structure prediction.</p>
+<p>The Sassembly toolchain is public at <a href="https://github.com/paramtatv/sassembly">github.com/paramtatv/sassembly</a>.</p></div></article></main></body></html>

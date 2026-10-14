@@ -66,7 +66,7 @@ def load_db():
         c.execute("SELECT slug,title,lang,translation_of,body_md,author,tags,published_at,updated_at FROM posts "
                   "WHERE status='published' AND published_at IS NOT NULL AND published_at<=NOW() "
                   "ORDER BY published_at DESC")
-        rows = c.fetchall()
+        rows = list(c.fetchall())
     for r in rows:
         t = r["tags"]; r["tags"] = json.loads(t) if isinstance(t, (str, bytes)) else (t or [])
     return rows

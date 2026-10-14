@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two playgrounds in your browser tab: Brihaspati and MantraSutra — Paramtatv</title><meta name="description" content="Two of our projects now live as pages you can open and use straight away, with nothing to install. Brihaspati is a notebook for Sassembly, our Sanskrit-native RISC-V assembly language. MantraSutra is…">
+<link rel="canonical" href="https://paramtatv.github.io/blog/playgrounds/">
+<link rel="alternate" type="application/atom+xml" href="https://paramtatv.github.io/blog/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../assets/blog.css">
+<script src="/assets/theme.js"></script></head>
+<body><header class="bh"><div class="bw"><a class="brand" href="/"><span class="deva">परमतत्त्वम्</span> Paramtatv</a>
+<span class="mark" aria-hidden="true">॥</span><a href="../">Blog</a><a href="../feed.xml">Feed</a></div></header>
+<main class="bw" lang="en"><article><h1>Two playgrounds in your browser tab: Brihaspati and MantraSutra</h1><p class="meta"><time datetime="2026-10-14">2026-10-14</time> · Paramtatva <span class="tag">sassembly</span><span class="tag">brihaspati</span><span class="tag">mantrasutra</span><span class="tag">webassembly</span><span class="tag">sanskrit</span></p><p class="trans"><a href="../playgrounds-sa/" hreflang="sa" lang="sa">संस्कृतम्</a> <a href="../playgrounds-hi/" hreflang="hi" lang="hi">हिन्दी</a></p><div class="post"><p>Two of our projects now live as pages you can open and use straight away, with nothing to install. <strong>Brihaspati</strong> is a notebook for Sassembly, our Sanskrit-native RISC-V assembly language. <strong>MantraSutra</strong> is a workbench for formulas and verse. Both do their real work inside the browser tab.</p>
+<h2>Brihaspati: a Sassembly notebook</h2>
+<p>Open <a href="https://paramtatv.github.io/brihaspati/">paramtatv.github.io/brihaspati</a>, write a cell and press <strong>चालय</strong> (Run). Here is what happens next:</p>
+<ol>
+<li>The cell is compiled by the <strong>self-hosted Sassembly compiler</strong>, Sassembly compiling Sassembly. The compiler image is 923,042 bytes.</li>
+<li>The compiler runs on <strong>yantra</strong>, our RV64 interpreter, compiled to WebAssembly. That module is 219,508 bytes.</li>
+<li>The program the compiler emits then runs on the same interpreter, in a background worker of the same tab.</li>
+</ol>
+<p>The interpreter starts with an <strong>empty import object</strong>. It is given no system call, no clock and no socket. The compiler, the interpreter and the native runner are each pinned by sha256.</p>
+<p>A cell looks like this. It prints the byte 88 (<code>X</code>) and returns 7:</p>
+<pre><code>मण्डलम् शृङ्खला ॥
+आयातः अष्टक ।
+
+सार्वजनिक वृत्तिः स्वपरीक्षास्वप्रतिबिम्बम् ददाति न६४ आदि
+    चरः क ॱॱ अङ्कः अन्तः न६४ भवति ० ।
+    चरः अवगणना ॱॱ न६४ भवति अष्टकॱमुद्रणम् ८८ ।
+    प्रत्यागमनम् ७ ।
+इति
+</code></pre>
+<p>The names are words. <code>अष्टकॱमुद्रणम्</code> prints an octet and <code>प्रत्यागमनम्</code> returns. Compiling this cell takes 73,268,811 guest instructions and running it takes 44.</p>
+<p><strong>The browser result equals the native result.</strong> For every sample cell, the emitted program's sha256, the output, the status, the instruction counts, the guest RAM and the heap high-water mark are identical in the browser and in a native run. A test checks all 19 sample cells, and before it starts it confirms that it really does catch a flipped field. We also checked the live page. We opened the <em>अङ्कगणितम्</em> (arithmetic) example and pressed <strong>सर्वं चालय</strong> (Run all) in headless Chrome. All eight code cells compiled and ran, and every one was marked <em>रक्षितेन समम्</em>: equal to the saved native output. The whole notebook took 69 seconds.</p>
+<p>The notebook has:</p>
+<ul>
+<li>code cells and Markdown note cells, which you can edit, run one at a time or all together, add, delete and move;</li>
+<li>notebooks that open and save as plain-text <code>.isas</code> files, with a badge on any saved result that a re-run does not reproduce;</li>
+<li>a sidebar library of the notebooks saved in your browser;</li>
+<li>four example notebooks: arithmetic, arrays and output, refusals, and images;</li>
+<li>refusals named in Sanskrit. Checked overflow, a write at −1, a read past the end and division by zero stop with statuses 860, 861, 853 and 862, and each one is shown by its Sanskrit name;</li>
+<li>an interface that is Sanskrit-first, with English and Hindi toggles.</li>
+</ul>
+<p>Every file the page uses (its code, the compiler image and the WebAssembly module) is served from the page's own site. The only other requests are for its web fonts. We are building toward live sessions in which cells share one running image.</p>
+<h2>MantraSutra: formulas and verse, computed in the tab</h2>
+<p><a href="https://mantrasutra.github.io/">mantrasutra.github.io</a> runs a vendored Pyodide with a Python and mpmath engine directly in the browser. It is the same engine the project tests against. We loaded all five pages in headless Chrome, and <strong>every request went to mantrasutra.github.io itself</strong>. In that run the engine was ready about seven seconds after the page opened.</p>
+<ul>
+<li><strong>Editor.</strong> Type <code>x^2/(1+e^x)</code> and the page shows the rendered LaTeX <code>\frac{x^{2}}{1 + e^{x}}</code>, the canonical सूत्र string and an English gloss: <em>"the square of x divided by the sum of 1 and the power, with exponent x, of e."</em> A button round-trips the formula back to its canonical form. Input it cannot read gets a named refusal instead of a guess.</li>
+<li><strong>Mantra.</strong> Paste a verse in Devanagari or IAST. We chose <em>Bhagavadgītā</em> 1.1 from the examples, and the page identified the metre as <strong>अनुष्टुभ् (श्लोक)</strong>. It split the verse into four pādas of eight syllables each and marked every syllable guru or laghu, giving the reason (a long vowel, a following conjunct, anusvāra or visarga). It counted the mātrās of each pāda (15, 12, 13 and 10), gave each pāda's prastāra index out of 256, and listed the attested readings of each word. The weights follow Piṅgala's <em>Chandaḥśāstra</em>. A link draws the weight curve in the Explorer.</li>
+<li><strong>Functions and Explorer.</strong> Domain packs of textbook formulas are evaluated by the engine and plotted as curves, heat maps, surfaces, domain colouring and sphere views.</li>
+</ul>
+<h2>One notebook format for both</h2>
+<p>MantraSutra's Mantra and Editor pages keep a history of your runs in the browser, and they save and export it as <code>.isas</code>, the same notebook format Brihaspati uses. The MantraSutra site uses byte-identical copies of Brihaspati's <code>.isas</code> reader and writer, so a file saved on one page opens on the other.</p>
+<p>Both projects are AGPL-3.0-only, and a commercial licence is also available. The source is at <a href="https://github.com/paramtatv/brihaspati">github.com/paramtatv/brihaspati</a>, and the language is at <a href="https://github.com/paramtatv/sassembly">github.com/paramtatv/sassembly</a>. Open a tab and try them.</p></div></article></main></body></html>

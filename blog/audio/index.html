@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&quot;Naad and Śravaṇa: audio you can decode, read and check&quot; — Paramtatv</title><meta name="description" content="Sound is the oldest subject of Sanskrit science. The tradition that gave the world a precise phonetics also gave it one word, svara, for both the pitch accent of a spoken syllable and a musical note.…">
+<link rel="canonical" href="https://paramtatv.github.io/blog/audio/">
+<link rel="alternate" type="application/atom+xml" href="https://paramtatv.github.io/blog/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../assets/blog.css">
+<script src="/assets/theme.js"></script></head>
+<body><header class="bh"><div class="bw"><a class="brand" href="/"><span class="deva">परमतत्त्वम्</span> Paramtatv</a>
+<span class="mark" aria-hidden="true">॥</span><a href="../">Blog</a><a href="../feed.xml">Feed</a></div></header>
+<main class="bw" lang="en"><article><h1>&quot;Naad and Śravaṇa: audio you can decode, read and check&quot;</h1><p class="meta"><time datetime="2026-10-14">2026-10-14</time> · Paramtatva <span class="tag">naad</span><span class="tag">sravana</span><span class="tag">audio</span><span class="tag">codec</span><span class="tag">sassembly</span></p><p class="trans"><a href="../audio-sa/" hreflang="sa" lang="sa">संस्कृतम्</a> <a href="../audio-hi/" hreflang="hi" lang="hi">हिन्दी</a></p><div class="post"><p>Sound is the oldest subject of Sanskrit science. The tradition that gave the world a precise phonetics also gave it one word, <em>svara</em>, for both the pitch accent of a spoken syllable and a musical note. At Paramtatva we are bringing audio into SANSOS, our Sanskrit-native operating system, in two parts: <strong>Naad</strong> (नाद), a lossless decoder that is live today, and <strong>Śravaṇa</strong> (श्रवण), the programme Naad opens.</p>
+<h2>Naad: a lossless decoder you can read to the bottom</h2>
+<p>Naad decodes FLAC, the open lossless audio format, and it is written entirely in Sassembly, our Sanskrit programming language, compiled to 64-bit RISC-V. The whole decoder kernel is <strong>1,907 lines</strong> in two files, with <strong>32 public routines</strong>, and <strong>zero lines of foreign code</strong> in the decode path: no C, no C++, no Rust, no hand-written assembly. It uses integer arithmetic only.</p>
+<p>You can hear it and read it at <a href="https://paramtatv.github.io/naad/">https://paramtatv.github.io/naad/</a>. The page plays a full recording of Grieg's <em>In the Hall of the Mountain King</em>, and the decoder source sits one link away in the public repository, <a href="https://github.com/paramtatv/naad">https://github.com/paramtatv/naad</a>.</p>
+<h3>What it has decoded</h3>
+<ul>
+<li><strong>A whole recording, end to end.</strong> The 154-second Grieg file on the page, 25,778,747 bytes of FLAC, decodes on the native image to <strong>44,378,214 bytes of 24-bit PCM</strong>, and that output's MD5 equals the checksum the original encoder sealed into the file's own header. The proof of correctness comes from someone else's software, not from us.</li>
+<li><strong>EBU SQAM: 70 of 70.</strong> Every recording in the European Broadcasting Union's sound-quality reference set decodes to exactly the MD5 its encoder stored.</li>
+<li><strong>IETF subset: 57 of 64</strong>, which is every mono and stereo file in a corpus built to exercise every encoder choice: block sizes, partition orders, coefficient precisions and bit depths of 8, 16 and 24.</li>
+<li><strong>IETF faulty set: 11 of 11</strong> deliberately damaged files end in a named status, never an out-of-bounds read or a trap.</li>
+</ul>
+<p>Behind those results is a verification ladder. All <strong>64 subframe type codes</strong> (39 legal, 25 reserved) and all four header code spaces are enumerated; <strong>10 whole frames</strong> are graded; and <strong>17 deliberate mutations</strong> of the kernel are each caught by the test built for it.</p>
+<h3>One stream, one file, every machine</h3>
+<p>A lossless decoder should give the same bytes everywhere, and Naad shows it. One and the same decoder image ran on <strong>four venues</strong>: a Mac and a Linux PC (both x86-64), an ARM64 Linux board, and the machine compiled to WebAssembly in a web browser. All four produced <strong>one audio digest and one executed-instruction count</strong>. That is two instruction sets and a browser agreeing to the instruction.</p>
+<p>The cost is measured as well: <strong>2,615 instructions per channel-sample</strong> on the path the product runs, decoding a real 24-bit file. On a simple model of a 1 GHz core running one instruction per cycle, that projects to <strong>4.0× real time</strong> for the recording on the page.</p>
+<h3>A taste of the source</h3>
+<p>Here is how Naad undoes mid/side stereo, copied verbatim from the decoder. The operators are Sanskrit words: <code>योगः</code> (add), <code>वियोगः</code> (subtract), <code>वामसृ</code> (shift left), <code>दक्षिणसृ</code> (shift right), <code>युक्</code> (bitwise and), <code>विकल्प</code> (bitwise or).</p>
+<pre><code>        यदि भेदः समम् ३ आदि
+            चरः मध्यम् ॱॱ न६४ भवति अ वामसृ १ ।
+            चरः अल्पांशः ॱॱ न६४ भवति ब युक् १ ।
+            मध्यम् भवति मध्यम् विकल्प अल्पांशः ।
+            चरः योगफलम् ॱॱ अ६४ भवति मध्यम् योगः ब ।
+            चरः अन्तरम् ॱॱ अ६४ भवति मध्यम् वियोगः ब ।
+            वामः अङ्कः इ अन्तः भवति योगफलम् दक्षिणसृ १ ।
+            दक्षिणः अङ्कः इ अन्तः भवति अन्तरम् दक्षिणसृ १ ।
+        इति
+</code></pre>
+<p>The mid channel is doubled and its lost low bit restored from the side channel. The sum and difference are taken as signed 64-bit values (<code>अ६४</code>), and each is halved back into the left and right channels.</p>
+<h2>Śravaṇa: where Naad leads</h2>
+<p>Naad is the first stratum of a larger programme. <strong>Śravaṇa</strong> aims at <em>bit-exact audio at neural quality</em>. Today the best-sounding audio at low bitrates comes from neural codecs, and floating-point inference does not promise identical output across hardware. Integer-only inference does, and exact integers are the native mode of Sassembly.</p>
+<p>We are building Śravaṇa in six strata, each with its own completion condition:</p>
+<ol>
+<li><strong>निःशेषम्, lossless:</strong> the floor and the proving ground. This is the stratum Naad delivers.</li>
+<li><strong>स्वरः, the symbolic layer:</strong> voice and music treated as one signal, encoding the control and not only the waveform.</li>
+<li><strong>तन्त्रम्:</strong> an integer-only neural decoder.</li>
+<li><strong>प्रमाणम्, attestation:</strong> one stream, one file, every machine.</li>
+<li><strong>प्रवाहः, transmission:</strong> latency, packet loss and attested delivery.</li>
+<li><strong>कोशः, the container:</strong> a decoder that travels with the stream it decodes.</li>
+</ol>
+<p>Naad's four-venue agreement is the first working instance of the attestation idea. Our direction is to carry the same guarantee upward, from lossless audio to neural quality, so that the best-sounding audio can also be archived and checked.</p>
+<p>Listen, read the source, and check the bytes yourself: <a href="https://paramtatv.github.io/naad/">https://paramtatv.github.io/naad/</a>.</p></div></article></main></body></html>

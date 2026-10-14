@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&quot;Seeing exactly: Darśana and the road to Svarūpa&quot; — Paramtatv</title><meta name="description" content="Darśana (दर्शन) means seeing. For us it also names a promise: what a camera&#x27;s sensor recorded is what you get back, every sample, every time, on every machine. This post covers what Darśana is today…">
+<link rel="canonical" href="https://paramtatv.github.io/blog/image/">
+<link rel="alternate" type="application/atom+xml" href="https://paramtatv.github.io/blog/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../assets/blog.css">
+<script src="/assets/theme.js"></script></head>
+<body><header class="bh"><div class="bw"><a class="brand" href="/"><span class="deva">परमतत्त्वम्</span> Paramtatv</a>
+<span class="mark" aria-hidden="true">॥</span><a href="../">Blog</a><a href="../feed.xml">Feed</a></div></header>
+<main class="bw" lang="en"><article><h1>&quot;Seeing exactly: Darśana and the road to Svarūpa&quot;</h1><p class="meta"><time datetime="2026-10-14">2026-10-14</time> · Paramtatva <span class="tag">image</span><span class="tag">codec</span><span class="tag">darshana</span><span class="tag">svarupa</span><span class="tag">sassembly</span></p><p class="trans"><a href="../image-sa/" hreflang="sa" lang="sa">संस्कृतम्</a> <a href="../image-hi/" hreflang="hi" lang="hi">हिन्दी</a></p><div class="post"><h1>Seeing exactly: Darśana and the road to Svarūpa</h1>
+<p><em>Darśana</em> (दर्शन) means <em>seeing</em>. For us it also names a promise: what a camera's sensor recorded is what you get back, every sample, every time, on every machine.</p>
+<p>This post covers what Darśana is today and where Svarūpa, the next step, is taking it.</p>
+<h2>A codec that is its own specification</h2>
+<p>Most image formats are defined by a prose document, and the decoders that follow it are written separately. Darśana works the other way round. Its <strong>normative decoder is a program</strong>, written in Sassembly, our Sanskrit-native RISC-V assembly language. That program <em>is</em> the specification. If you want to know what a Darśana file means, run the decoder.</p>
+<p>The decoder is small. As a complete RISC-V image, code and data together, it measures <strong>27,272 octets</strong>. The written normative description that accompanies it is checked mechanically, and <strong>all 1,990 of its 1,990 checks pass</strong>.</p>
+<p>The everyday tool runs alongside it. <code>darsan</code> is a command-line program in plain C99 with no dependencies. It is a <em>twin</em> of the normative decoder, and the two are held to agreement byte for byte, so speed never changes the answer.</p>
+<h2>Built from exact integer parts</h2>
+<p>Every stage of the codec is integer arithmetic, and every stage is proven against an independent reference:</p>
+<ul>
+<li><strong>The transform</strong> is the H.264 4×4 integer inverse transform. It passes all 16 of its reference vectors.</li>
+<li><strong>The entropy coder</strong> is rANS. It passes round-trip and desynchronisation tests, using a fixture produced by a separately written encoder.</li>
+<li><strong>The test vectors are themselves tested.</strong> We deliberately break the implementation (a logical shift where an arithmetic one belongs, a dropped rounding step, a transposed matrix) and check that the vectors catch every mutant. They catch all of them.</li>
+<li><strong>Integrity checks</strong> use SHA-256, verified against the FIPS 180-4 test vectors, and a CRC on every part of the file.</li>
+</ul>
+<h2>One answer on three architectures</h2>
+<p>Exactness only means something if it holds everywhere. We run the same decoding work on three very different machines, <strong>x86-64, 64-bit RISC-V and WebAssembly (wasm32)</strong>, and fold the result into one checksum. All three report the same value: <strong>1267710892</strong>.</p>
+<h2>A real camera frame, sample for sample</h2>
+<p>The Sassembly encoder writes a full <strong>12.13-megapixel</strong> frame. Its output is byte-identical to the reference encoder's, and the Sassembly decoder turns it back into the original exactly. The encoder exists in three languages (Sassembly, Python and C), and all three produce identical bytes.</p>
+<p>With the C tool, a public-domain (CC0) iPhone 6s Plus DNG from raw.pixls.us, 4032 × 3008 sensor samples, becomes <strong>8,727,526 octets at 5.757 bits per sample</strong>, and every sample is checked on the way back. The encoder decodes what it has just written and confirms the match before it reports success. Darśana reads DNG, PNG and TIFF.</p>
+<h2>The decoder travels with the picture</h2>
+<p>Darśana's container, <em>sampuṭa</em> (संपुट, a casket), carries the decoder inside the file next to the data. It decodes itself in an environment with no libraries and no network. Its contents are sealed, so a file whose bytes have changed is recognised before anything runs. A picture packaged this way carries everything needed to read it.</p>
+<h2>Svarūpa: camera raw to code to the identical picture</h2>
+<p><em>Svarūpa</em> (स्वरूप) means <em>one's own form</em>. It is where Darśana is heading.</p>
+<p>We are building toward a pipeline in which camera raw becomes a code, and the code becomes <strong>exactly the same picture, every sample</strong>. The proof is given on the SANSOS machine, a small RISC-V computer that counts every instruction it executes. The same 27,272-octet decoder does the work, and it fits comfortably inside the 88 KiB budget we set for it.</p>
+<p>Agreement is the bar. The C99 twin, the normative Sassembly decoder running both natively and as WebAssembly, and the camera's own original data must all produce the same picture, with the same instruction count on both machines. The working set is drawn from openly licensed raw files: CC0 crops from raw.pixls.us (Phase One H 25, iPhone XS, Nikon D7000) and the R³ rain dataset (CC BY 4.0).</p>
+<p>Beyond that we are designing two further directions: from <em>words to picture</em>, and from <em>picture to motion</em>. Both rest on the same foundation, that a picture is a program, and that a program can be run, counted and checked.</p>
+<h2>Why it matters</h2>
+<p>A photograph is evidence: of a scene, an experiment, a moment. Darśana treats it that way. The specification can be executed, the fast path is proven equal to it, the answer is identical on every architecture we run, and the file carries its own reader. Seeing, done exactly.</p></div></article></main></body></html>
