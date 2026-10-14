@@ -1,0 +1,4 @@
+
+# local blog env (credentials)
+blog/.env.local
+.env*

@@ -1,0 +1,22 @@
+:root{--ground:#FBF8F3;--surface:#fff;--sunk:#F3EDE3;--ink:#16140F;--ink-2:#45403A;--ink-3:#6A6459;--rule:#E6DDCE;--madder:#A8351C;--code-bg:#1A1814;--code-fg:#F4EFE5;
+--deva:'Tiro Devanagari Sanskrit','Noto Serif Devanagari',serif;--disp:'Spectral',Georgia,serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+:root[data-theme="dark"]{--ground:#121110;--surface:#1C1A17;--sunk:#0C0B0A;--ink:#F2EDE3;--ink-2:#D2C9B9;--ink-3:#A29886;--rule:#2E2A25;--madder:#E8917B}
+*{box-sizing:border-box}body{margin:0;background:var(--ground);color:var(--ink);font:18px/1.65 var(--disp)}
+.bw{max-width:42em;margin:0 auto;padding:0 20px}
+.bh{border-bottom:1px solid var(--rule)}.bh .bw{display:flex;gap:16px;align-items:baseline;padding-top:14px;padding-bottom:14px}
+.brand{color:var(--ink);text-decoration:none;font-weight:600;margin-right:auto}.deva{font-family:var(--deva)}
+.mark{color:var(--madder)}.bh a{color:var(--ink-2);text-decoration:none}.bh a:hover{color:var(--madder)}
+h1{font-size:clamp(26px,3.2vw,38px);font-weight:600;line-height:1.2;margin:1.2em 0 .3em}
+h2,h3{font-weight:600;margin:1.6em 0 .4em}a{color:var(--madder)}
+.meta,.list time{color:var(--ink-3);font-size:15px}.tag{border:1px solid var(--rule);border-radius:4px;padding:0 6px;margin-left:4px;font:13px var(--mono)}
+.list{list-style:none;padding:0}.list li{padding:14px 0;border-bottom:1px solid var(--rule)}
+.list a{font-size:21px;font-weight:600;text-decoration:none}.list time{margin-left:10px}.list p{margin:.3em 0 0;color:var(--ink-2)}
+code{font-family:var(--mono);font-size:.88em;background:var(--sunk);padding:1px 4px;border-radius:4px}
+pre{background:var(--code-bg);color:var(--code-fg);padding:14px;border-radius:6px;overflow:auto}pre code{background:none;padding:0;color:inherit}
+blockquote{border-left:3px solid var(--madder);margin:1em 0;padding-left:16px;color:var(--ink-2)}
+img{max-width:100%}table{border-collapse:collapse}td,th{border:1px solid var(--rule);padding:4px 10px}
+main{padding-bottom:60px}
+.langs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px}.langs a{border:1px solid var(--rule);border-radius:14px;padding:2px 12px;text-decoration:none;font-size:15px;color:var(--ink-2)}
+.langs a[aria-current]{background:var(--madder);border-color:var(--madder);color:#fff}.trans{font-size:15px}.trans a{margin-right:10px}
+:lang(hi),:lang(sa){font-family:'Noto Serif Devanagari','Tiro Devanagari Sanskrit','Tiro Devanagari Hindi','Kohinoor Devanagari','Devanagari Sangam MN','Mangal',serif;line-height:1.8}
+.mono,code,pre{font-family:var(--mono)}

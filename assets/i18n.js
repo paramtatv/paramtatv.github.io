@@ -15,6 +15,7 @@
     sa: {
       'ptnav.discord': 'अध्ययनसङ्घः',
       'pt.ded.name': 'श्रीसद्गुरुदेवः निखिलेश्वरानन्दः',
+      'ptnav.blog': 'लेखाः',
       'ptnav.sassembly': 'संस्कृतयन्त्रम्',
       'lang.label': 'भाषा',
       'pt.title': 'परमतत्त्वम् — सद्गुरुचरणेषु समर्पणम्',
@@ -59,6 +60,7 @@
     en: {
       'ptnav.discord': 'Discord',
       'pt.ded.name': 'Sadgurudev Shri Nikhileshwarananda',
+      'ptnav.blog': 'Blog',
       'ptnav.sassembly': 'Sassembly',
       'lang.label': 'Language',
       'pt.title': 'Paramtatv — at the feet of Sadgurudev',
@@ -103,6 +105,7 @@
     hi: {
       'ptnav.discord': 'डिस्कॉर्ड',
       'pt.ded.name': 'सद्गुरुदेव श्री निखिलेश्वरानन्द',
+      'ptnav.blog': 'ब्लॉग',
       'ptnav.sassembly': 'Sassembly',
       'lang.label': 'भाषा',
       'pt.title': 'परमतत्त्व — सद्गुरुदेव के श्रीचरणों में',
